@@ -4,18 +4,11 @@ using Core;
 using Microsoft.Extensions.Logging;
 
 namespace Business.Services;
-public class WeatherService : IWeatherService
+public class WeatherService(ILogger<WeatherService> logger, IMapper mapper, IStorage storage) : IWeatherService
 {
-    private readonly ILogger<WeatherService> _logger;
-    private readonly IMapper _mapper;
-    private readonly IStorage _storage;
-
-    public WeatherService(ILogger<WeatherService> logger, IMapper mapper, IStorage storage)
-    {
-        _logger = logger;
-        _mapper = mapper;
-        _storage = storage;
-    }
+    private readonly ILogger<WeatherService> _logger = logger;
+    private readonly IMapper _mapper = mapper;
+    private readonly IStorage _storage = storage;
 
     public async Task<Result<WeatherForecast>> GetWeatherForecastByDateAsync(DateOnly date, CancellationToken cancellationToken = default)
     {
