@@ -1,0 +1,27 @@
+@Weather_Minimal_Api_HostAddress = http://localhost:5234
+
+
+GET {{Weather_Minimal_Api_HostAddress}}/api/Weather/GetWeatherForecastForDate?date=2024-08-12
+Accept: */*
+
+###
+
+POST {{Weather_Minimal_Api_HostAddress}}/api/Weather/AddWeather
+Content-Type: application/json
+
+{
+ "date": "2024-08-12",
+ "weather": {
+   "temperature": 20.5,
+   "windDirection": 0,
+   "windSpeed": 70.2,
+   "name": "sunny",
+   "description": "Warm sunny weather, sometimes cloudy"
+ }
+}
+
+###
+
+
+POST {{Weather_Minimal_Api_HostAddress}}/api/Weather/Clear
+Accept: */*
