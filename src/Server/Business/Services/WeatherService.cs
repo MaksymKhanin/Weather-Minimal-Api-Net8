@@ -14,32 +14,32 @@ public class WeatherService(ILogger<WeatherService> logger, IMapper mapper, ISto
     {
         _logger.LogInformation("Trying to get weather forecast from the storage.");
 
-        var result = await _storage.GetWeatherForecastByDateAsync(date, cancellationToken);
+        var weatherResult = await _storage.GetWeatherForecastByDateAsync(date, cancellationToken);
 
-        if (result.IsFailure)
+        if (weatherResult.IsFailure)
         {
-            return result;
+            return weatherResult;
         }
 
-        _logger.LogInformation($"Found weather forecast: Date - {result.Value!.Date}; Temperature - {result.Value!.Weather.Temperature}");
+        _logger.LogInformation($"Found weather forecast: Date - {weatherResult.Value!.Date}; Temperature - {weatherResult.Value!.Weather.Temperature}");
 
-        return result;
+        return weatherResult;
     }
 
     public async Task<Result> AddWeatherForecastAsync(WeatherForecast weatherForecast, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Trying to add weather forecast to the storage.");
         
-        var result = await _storage.AddWeatherForecastAsync(weatherForecast, cancellationToken);
+        var weatherResult = await _storage.AddWeatherForecastAsync(weatherForecast, cancellationToken);
 
-        if (result.IsFailure)
+        if (weatherResult.IsFailure)
         {
-            return result;
+            return weatherResult;
         }
 
-        _logger.LogInformation("Successfully added weather forecast.");
+        _logger.LogInformation("Successfully added weather forecast to the storage.");
 
-        return result;
+        return weatherResult;
     }
 
     public async Task<Result> ClearAsync(CancellationToken cancellationToken)

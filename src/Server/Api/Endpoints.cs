@@ -2,6 +2,7 @@
 using Business.Domain_Objects;
 using Business.Services;
 using Weather_Minimal_Api.DTOs;
+using Weather_Minimal_Api.Extensions;
 
 namespace Weather_Minimal_Api;
 
@@ -24,8 +25,8 @@ public class WeatherEndpoints
 
         return (await _weatherService.GetWeatherForecastByDateAsync(date, cancellationToken)).Match<IResult>(
             success => TypedResults.Ok(_mapper.Map<WeatherForecastResponse>(success)),
-            error => TypedResults.BadRequest(error),
-            notFound => TypedResults.NotFound(notFound));
+            error => error.ToBadRequestProblemDetails(),
+            notFound => notFound.ToNotFoundProblemDetails());
     }
 
     public async static Task<IResult> AddWeatherAsync([AsParameters] AddWeatherRequest addWeatherForecastRequest, IMapper _mapper, ILogger<WeatherEndpoints> _logger, IWeatherService _weatherService, CancellationToken cancellationToken = default)
@@ -39,17 +40,17 @@ public class WeatherEndpoints
 
         return (result.IsSuccess)
             ? TypedResults.Ok()
-            : TypedResults.BadRequest(result.Error);
+            : result.ToProblemDetails();
     }
 
     public async static Task<IResult> ClearAsync(ILogger<WeatherEndpoints> _logger, IWeatherService _weatherService, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Received reuest to clear storage");
+        _logger.LogInformation("Received request to clear storage");
 
         var result = await _weatherService.ClearAsync(cancellationToken);
 
         return (result.IsSuccess)
             ? TypedResults.Ok()
-            : TypedResults.BadRequest(result.Error);
+            : result.ToProblemDetails();
     }
 }
