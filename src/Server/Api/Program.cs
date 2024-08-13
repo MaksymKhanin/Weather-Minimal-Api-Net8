@@ -10,10 +10,12 @@ builder.Services.AddScoped<IWeatherService, WeatherService>();
 builder.Services.AddScoped<IStorage, InMemoryStorage>();
 builder.Services.AddAutoMapper(typeof(RequestToDomainMapping));
 builder.Services.AddAutoMapper(typeof(DomainToResponseMapping));
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseExceptionHandler();
 
 WeatherEndpoints.MapWeatherEndpoints(app);
 
