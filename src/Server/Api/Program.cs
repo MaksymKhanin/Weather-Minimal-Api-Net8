@@ -19,6 +19,8 @@ app.UseExceptionHandler();
 
 WeatherEndpoints.MapWeatherEndpoints(app);
 
+app.Urls.Add("http://*:5000");
+
 app.Run();
 
 

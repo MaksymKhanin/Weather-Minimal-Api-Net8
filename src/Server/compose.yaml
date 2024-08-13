@@ -1,0 +1,9 @@
+version: '3'
+services: 
+  weather-container:
+    image: weather-image
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8080:5000"
+      

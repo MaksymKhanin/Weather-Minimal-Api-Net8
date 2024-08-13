@@ -1,4 +1,4 @@
-@Weather_Minimal_Api_HostAddress = http://localhost:5234
+@Weather_Minimal_Api_HostAddress = http://localhost:5000
 
 
 GET {{Weather_Minimal_Api_HostAddress}}/api/Weather/GetWeatherForecastForDate?date=2024-08-12
