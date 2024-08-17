@@ -1,4 +1,6 @@
-﻿namespace Business.Domain_Objects;
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace Business.Domain_Objects;
 public class Weather : IEquatable<Weather>
 {
     public double Temperature { get; private set; }
@@ -12,7 +14,9 @@ public class Weather : IEquatable<Weather>
         (Temperature, WindDirection, WindSpeed, Name, Description, Recommendation) = (temperature, windDirection, windSpeed, name, description, recommendation);
 
     public static Weather Create(double temperature, WindDirection windDirection, double windSpeed, string name, string description, string? recommendation) =>
-        new Weather(temperature, windDirection, windSpeed, name, description, recommendation);
+        (temperature == default || windSpeed == default || string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(description))
+        ? throw new ArgumentException("Wrong data format.")
+        : new Weather(temperature, windDirection, windSpeed, name, description, recommendation);
 
     public bool Equals(Weather? other)
     {

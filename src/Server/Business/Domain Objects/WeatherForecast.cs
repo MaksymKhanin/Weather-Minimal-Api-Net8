@@ -7,8 +7,11 @@ public class WeatherForecast : IEquatable<WeatherForecast>
     private WeatherForecast(DateOnly date, Weather weather) =>
         (Date, Weather) = (date, weather);
 
+    //later rewrite to Result
     public static WeatherForecast Create(DateOnly date, Weather weather) =>
-        new(date, weather);
+        (date == DateOnly.MinValue || weather is null)
+        ? throw new ArgumentException("Wrong data format.")
+        : new(date, weather);
 
     public bool Equals(WeatherForecast? other)
     {
