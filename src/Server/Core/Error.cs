@@ -6,6 +6,7 @@ public record ValidationError(ErrorCode ErrorCode, string Message) : Error(Error
 public record WeatherForecastNotFoundError(DateOnly Date) : NotFoundError(ErrorCode.WeatherForecastNotFoundError, $"Weather forecast for date: {Date} not found in storage.");
 public record WeatherForecastAlreadyExistsError() : AlreadyExistsError(ErrorCode.WeatherForecastAlreadyExistsError, "Weather forecast with same data already exists.");
 public record WeatherValidationError(string PropertyName, string PropertyValue) : ValidationError(ErrorCode.WeatherValidationError, $"Weather property: {PropertyName} with value: {PropertyValue} is invalid.");
+public record WeatherForecastValidationError(string PropertyName, string PropertyValue) : ValidationError(ErrorCode.WeatherForecastValidationError, $"Weather forecast property: {PropertyName} with value: {PropertyValue} is invalid.");
 
 
 public enum ErrorCode
@@ -16,5 +17,6 @@ public enum ErrorCode
     AlreadyExistsError = 2,
     WeatherForecastAlreadyExistsError = 20,
     ValidationError = 3,
-    WeatherValidationError = 30
+    WeatherValidationError = 310,
+    WeatherForecastValidationError = 320
 }

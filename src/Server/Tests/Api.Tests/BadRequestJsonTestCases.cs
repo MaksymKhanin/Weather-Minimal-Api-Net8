@@ -52,7 +52,7 @@ internal sealed class BadRequestJsonTestCases : TheoryData<JsonPayloadTestCaseIt
         Add(new("weather property is empty", /*lang=json,strict*/ """
         {
          "date": "2024-08-12",
-         "weather": ""
+         "weather": {}
         }
         """));
 
@@ -75,11 +75,11 @@ internal sealed class BadRequestJsonTestCases : TheoryData<JsonPayloadTestCaseIt
         }
         """));
 
-        Add(new("temperature property is null", /*lang=json,strict*/ """
+        Add(new("temperature property is empty", /*lang=json,strict*/ """
         {
          "date": "2024-08-12",
          "weather": {
-           "temperature": null,
+           "temperature": ,
            "windDirection": 0,
            "windSpeed": 70.2,
            "name": "sunny",
@@ -88,11 +88,12 @@ internal sealed class BadRequestJsonTestCases : TheoryData<JsonPayloadTestCaseIt
         }
         """));
 
-        Add(new("winddirection property is absent", /*lang=json,strict*/ """
+        Add(new("temperature property is null", /*lang=json,strict*/ """
         {
          "date": "2024-08-12",
          "weather": {
-           "temperature": 20.5,
+           "temperature": null,
+           "windDirection": 0,
            "windSpeed": 70.2,
            "name": "sunny",
            "description": "Warm sunny weather, sometimes cloudy"
@@ -112,6 +113,32 @@ internal sealed class BadRequestJsonTestCases : TheoryData<JsonPayloadTestCaseIt
         }
         """));
 
+        Add(new("windspeed property is empty", /*lang=json,strict*/ """
+        {
+         "date": "2024-08-12",
+         "weather": {
+           "temperature": 20.5,
+           "windDirection": 0,
+            "windSpeed": ,
+           "name": "sunny",
+           "description": "Warm sunny weather, sometimes cloudy"
+         }
+        }
+        """));
+
+        Add(new("windspeed property is null", /*lang=json,strict*/ """
+        {
+         "date": "2024-08-12",
+         "weather": {
+           "temperature": 20.5,
+           "windDirection": 0,
+            "windSpeed": null,
+            "name": "sunny",
+            "description": "Warm sunny weather, sometimes cloudy"
+         }
+        }
+        """));
+
         Add(new("name property is absent", /*lang=json,strict*/ """
         {
          "date": "2024-08-12",
@@ -120,6 +147,121 @@ internal sealed class BadRequestJsonTestCases : TheoryData<JsonPayloadTestCaseIt
            "windDirection": 0,
            "windSpeed": 70.2,
            "description": "Warm sunny weather, sometimes cloudy"
+         }
+        }
+        """));
+
+        Add(new("name property is empty", /*lang=json,strict*/ """
+        {
+         "date": "2024-08-12",
+         "weather": {
+           "temperature": 20.5,
+           "windDirection": 0,
+           "windSpeed": 70.2,
+            "name": "",
+           "description": "Warm sunny weather, sometimes cloudy"
+         }
+        }
+        """));
+
+        Add(new("name property is null", /*lang=json,strict*/ """
+        {
+         "date": "2024-08-12",
+         "weather": {
+           "temperature": 20.5,
+           "windDirection": 0,
+           "windSpeed": 70.2,
+           "name": null,
+           "description": "Warm sunny weather, sometimes cloudy"
+         }
+        }
+        """));
+
+        Add(new("description property is absent", /*lang=json,strict*/ """
+        {
+         "date": "2024-08-12",
+         "weather": {
+           "temperature": 20.5,
+           "windDirection": 0,
+           "windSpeed": 70.2,
+           "name": "sunny"
+         }
+        }
+        """));
+
+        Add(new("description property is empty", /*lang=json,strict*/ """
+        {
+         "date": "2024-08-12",
+         "weather": {
+           "temperature": 20.5,
+           "windDirection": 0,
+           "windSpeed": 70.2,
+           "name": "sunny",
+           "description": ""
+         }
+        }
+        """));
+
+        Add(new("description property is null", /*lang=json,strict*/ """
+        {
+         "date": "2024-08-12",
+         "weather": {
+           "temperature": 20.5,
+           "windDirection": 0,
+           "windSpeed": 70.2,
+           "name": "sunny",
+           "description": null
+         }
+        }
+        """));
+
+        Add(new("winddirection property is absent", /*lang=json,strict*/ """
+        {
+         "date": "2024-08-12",
+         "weather": {
+           "temperature": 20.5,
+           "windSpeed": 70.2,
+           "name": "sunny",
+           "description": null
+         }
+        }
+        """));
+
+        Add(new("winddirection property is empty", /*lang=json,strict*/ """
+        {
+         "date": "2024-08-12",
+         "weather": {
+           "temperature": 20.5,
+           "windDirection": ,
+           "windSpeed": 70.2,
+           "name": "sunny",
+           "description": null
+         }
+        }
+        """));
+
+        Add(new("winddirection property is null", /*lang=json,strict*/ """
+        {
+         "date": "2024-08-12",
+         "weather": {
+           "temperature": 20.5,
+           "windDirection": null,
+           "windSpeed": 70.2,
+           "name": "sunny",
+           "description": null
+         }
+        }
+        """));
+
+        Add(new("winddirection property value does not exist", /*lang=json,strict*/ """
+        {
+         "date": "2024-08-12",
+         "weather": {
+           "temperature": 20.5,
+           "windDirection": 7,
+           "windSpeed": 70.2,
+           "name": "sunny",
+           "description": null
          }
         }
         """));

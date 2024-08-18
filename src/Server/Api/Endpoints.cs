@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Business.Domain_Objects;
 using Business.Services;
+using Core;
 using Weather_Minimal_Api.DTOs;
 using Weather_Minimal_Api.Extensions;
 
 namespace Weather_Minimal_Api;
-
 
 public class WeatherEndpoints
 {
@@ -32,15 +32,21 @@ public class WeatherEndpoints
     public async static Task<IResult> AddWeatherAsync([AsParameters] AddWeatherRequest addWeatherForecastRequest, IMapper _mapper, ILogger<WeatherEndpoints> _logger, IWeatherService _weatherService, CancellationToken cancellationToken = default)
     {
         _logger.BeginScope("Request: {@request}", addWeatherForecastRequest);
-        _logger.LogInformation("Received reuest to add weather forecast: {@weatherForecast}", addWeatherForecastRequest);
+        _logger.LogInformation("Received request to add weather forecast: {@weatherForecast}", addWeatherForecastRequest);
 
-        var weatherForecast = _mapper.Map<WeatherForecast>(addWeatherForecastRequest.WeatherForecast);
+        var weatherForecastResult = _mapper.Map<Result<WeatherForecast>>(addWeatherForecastRequest.WeatherForecast);
 
-        var result = await _weatherService.AddWeatherForecastAsync(weatherForecast, cancellationToken);
+        if (weatherForecastResult.IsFailure)
+        {
+            _logger.LogError(weatherForecastResult.Error!.Message);
+            return weatherForecastResult.ToProblemDetails();
+        }
 
-        return (result.IsSuccess)
+        var addWeatherForecastResult = await _weatherService.AddWeatherForecastAsync(weatherForecastResult.Value!, cancellationToken);
+
+        return (addWeatherForecastResult.IsSuccess)
             ? TypedResults.Ok()
-            : result.ToProblemDetails();
+            : addWeatherForecastResult.ToProblemDetails();
     }
 
     public async static Task<IResult> ClearAsync(ILogger<WeatherEndpoints> _logger, IWeatherService _weatherService, CancellationToken cancellationToken = default)

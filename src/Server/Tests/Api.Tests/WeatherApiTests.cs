@@ -44,7 +44,6 @@ public sealed class WeatherApiTests : IClassFixture<CustomWebApplicationFactory>
 
         var response = await client.PostAsync("api/Weather/AddWeather", new StringContent(item.Payload, Encoding.UTF8, MediaTypeNames.Application.Json));
 
-        //after reqriting to Result, check if is expected Result
-        response.Should().NotBeNull();
+        response.Should().Be400BadRequest();
     }
 }

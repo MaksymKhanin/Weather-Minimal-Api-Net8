@@ -1,4 +1,5 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using Core;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Business.Domain_Objects;
 public class Weather : IEquatable<Weather>
@@ -13,10 +14,30 @@ public class Weather : IEquatable<Weather>
     private Weather(double temperature, WindDirection windDirection, double windSpeed, string name, string description, string? recommendation) =>
         (Temperature, WindDirection, WindSpeed, Name, Description, Recommendation) = (temperature, windDirection, windSpeed, name, description, recommendation);
 
-    public static Weather Create(double temperature, WindDirection windDirection, double windSpeed, string name, string description, string? recommendation) =>
-        (temperature == default || windSpeed == default || string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(description))
-        ? throw new ArgumentException("Wrong data format.")
-        : new Weather(temperature, windDirection, windSpeed, name, description, recommendation);
+    public static Result<Weather> Create(double temperature, WindDirection windDirection, double windSpeed, string name, string description, string? recommendation)
+    {
+        if (temperature == default)
+        {
+            return new WeatherValidationError(nameof(temperature), temperature.ToString());
+        }
+
+        if (windSpeed == default)
+        {
+            return new WeatherForecastValidationError(nameof(windSpeed), windSpeed.ToString());
+        }
+
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return new WeatherForecastValidationError(nameof(name), name.ToString());
+        }
+
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            return new WeatherForecastValidationError(nameof(description), description.ToString());
+        }
+
+        return Result.Success(new Weather(temperature, windDirection, windSpeed, name, description, recommendation));
+    }
 
     public bool Equals(Weather? other)
     {
