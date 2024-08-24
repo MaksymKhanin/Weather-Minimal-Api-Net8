@@ -1,8 +1,9 @@
-﻿using Core;
+﻿using Business.Domain_Objects.Value_Objects;
+using Core;
 
 namespace Business.Domain_Objects;
 
-public sealed class WeatherForecast : IEquatable<WeatherForecast>
+public sealed class WeatherForecast : ValueObject
 {
     public DateOnly Date { get; private init; }
     public Weather Weather { get; private init; }
@@ -10,7 +11,7 @@ public sealed class WeatherForecast : IEquatable<WeatherForecast>
     private WeatherForecast(DateOnly date, Weather weather) =>
         (Date, Weather) = (date, weather);
 
-    public static Result<WeatherForecast> Create(DateOnly date, Weather weather)
+    internal static Result<WeatherForecast> Create(DateOnly date, Weather weather)
     {
         if (date == DateOnly.MinValue)
         {
@@ -25,20 +26,9 @@ public sealed class WeatherForecast : IEquatable<WeatherForecast>
         return Result.Success(new WeatherForecast(date, weather));
     }
 
-
-    public bool Equals(WeatherForecast? other)
+    protected override IEnumerable<object> GetAtomicValues()
     {
-        if (other == null)
-        {
-            return false;
-        }
-
-        if (Date == other.Date && Weather.Equals(other.Weather))
-        {
-
-            return true;
-        }
-
-        return false;
+        yield return Date;
+        yield return Weather;
     }
 }

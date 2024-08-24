@@ -1,7 +1,8 @@
-﻿using Core;
+﻿using Business.Domain_Objects.Value_Objects;
+using Core;
 
 namespace Business.Domain_Objects;
-public sealed class Weather : IEquatable<Weather>
+public sealed class Weather : ValueObject
 {
     public double Temperature { get; private init; }
     public WindDirection WindDirection { get; private init; }
@@ -13,7 +14,7 @@ public sealed class Weather : IEquatable<Weather>
     private Weather(double temperature, WindDirection windDirection, double windSpeed, string name, string description, string? recommendation) =>
         (Temperature, WindDirection, WindSpeed, Name, Description, Recommendation) = (temperature, windDirection, windSpeed, name, description, recommendation);
 
-    public static Result<Weather> Create(double temperature, WindDirection windDirection, double windSpeed, string name, string description, string? recommendation)
+    internal static Result<Weather> Create(double temperature, WindDirection windDirection, double windSpeed, string name, string description, string? recommendation)
     {
         if (temperature == default)
         {
@@ -38,24 +39,17 @@ public sealed class Weather : IEquatable<Weather>
         return Result.Success(new Weather(temperature, windDirection, windSpeed, name, description, recommendation));
     }
 
-    public bool Equals(Weather? other)
+    protected override IEnumerable<object> GetAtomicValues()
     {
-        if (other == null)
+        yield return Temperature;
+        yield return WindDirection;
+        yield return WindSpeed;
+        yield return Name;
+        yield return Description;
+
+        if (Recommendation is not null)
         {
-            return false;
+            yield return Recommendation;
         }
-
-        if (Temperature == other.Temperature &&
-            WindDirection == other.WindDirection &&
-            WindSpeed == other.WindSpeed &&
-            Name == other.Name &&
-            Description == other.Description &&
-            Recommendation == other.Recommendation)
-        {
-
-            return true;
-        }
-
-        return false;
     }
 }
