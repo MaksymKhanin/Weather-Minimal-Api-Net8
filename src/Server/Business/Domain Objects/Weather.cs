@@ -23,17 +23,17 @@ public class Weather : IEquatable<Weather>
 
         if (windSpeed == default)
         {
-            return new WeatherForecastValidationError(nameof(windSpeed), windSpeed.ToString());
+            return new WeatherValidationError(nameof(windSpeed), windSpeed.ToString());
         }
 
         if (string.IsNullOrWhiteSpace(name))
         {
-            return new WeatherForecastValidationError(nameof(name), name.ToString());
+            return new WeatherValidationError(nameof(name), name.ToString());
         }
 
         if (string.IsNullOrWhiteSpace(description))
         {
-            return new WeatherForecastValidationError(nameof(description), description.ToString());
+            return new WeatherValidationError(nameof(description), description.ToString());
         }
 
         return Result.Success(new Weather(temperature, windDirection, windSpeed, name, description, recommendation));

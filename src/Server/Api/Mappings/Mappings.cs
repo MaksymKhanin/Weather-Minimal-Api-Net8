@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Business.Commands;
 using Business.Domain_Objects;
+using Business.Queries;
 using Core;
 using Weather_Minimal_Api.DTOs;
 
@@ -8,24 +10,8 @@ public class RequestToDomainMapping : Profile
 {
     public RequestToDomainMapping()
     {
-        CreateMap<WeatherForecastRequest, Result<WeatherForecast>>().ConstructUsing((dto, context) =>
-        {
-            if (dto.Weather is null)
-            {
-                return new WeatherForecastValidationError(nameof(dto.Weather), "null");
-            }
-
-            var weatherResult = context.Mapper.Map<Result<Weather>>(dto.Weather);
-
-            if (weatherResult.IsFailure)
-            {
-                return new ValidationError(weatherResult.Error!.ErrorCode, weatherResult.Error.Message);
-            }
-
-            return WeatherForecast.Create(dto.Date, weatherResult.Value!);
-        });
-
-        CreateMap<WeatherRequest, Result<Weather>>().ConstructUsing((WeatherRequest dto) => Weather.Create(dto.Temperature, dto.WindDirection, dto.WindSpeed, dto.Name, dto.Description, dto.Recommendation));
+        CreateMap<AddWeatherRequest, AddWeatherCommand>();
+        CreateMap<GetWeatherRequest, GetWeatherQuery>();
     }
 }
 

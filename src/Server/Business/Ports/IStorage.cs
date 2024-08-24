@@ -1,10 +1,10 @@
 ﻿using Business.Domain_Objects;
 using Core;
 
-namespace Business.Services;
-public interface IWeatherService
+namespace Business.Ports;
+public interface IStorage
 {
     Task<Result> AddWeatherForecastAsync(WeatherForecast weatherForecast, CancellationToken cancellationToken = default);
-    Task<Result> ClearAsync(CancellationToken cancellationToken);
+    Task ClearAsync(CancellationToken cancellationToken);
     Task<Result<WeatherForecast>> GetWeatherForecastByDateAsync(DateOnly date, CancellationToken cancellationToken = default);
 }

@@ -18,14 +18,12 @@ public sealed class WeatherApiTests : IClassFixture<CustomWebApplicationFactory>
     {
         var payload = /*lang=json,strict*/ """
         {
-         "date": "2024-08-12",
-         "weather": {
+           "date": "2024-08-12",
            "temperature": 20.5,
            "windDirection": 0,
            "windSpeed": 70.2,
            "name": "sunny",
            "description": "Warm sunny weather, sometimes cloudy"
-         }
         }
         """;
 

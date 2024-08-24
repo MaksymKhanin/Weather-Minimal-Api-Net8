@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using Business.Domain_Objects;
-using Business.Services;
-using Core;
+using Business.Commands;
+using Business.Queries;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Weather_Minimal_Api.DTOs;
 using Weather_Minimal_Api.Extensions;
 
@@ -18,42 +19,34 @@ public class WeatherEndpoints
         weather.MapPost("/Clear", ClearAsync);
     }
 
-    public async static Task<IResult> GetWeatherForecastForDateAsync(DateOnly date, ILogger<WeatherEndpoints> _logger, IMapper _mapper, IWeatherService _weatherService, CancellationToken cancellationToken = default)
+    private static async Task<IResult> GetWeatherForecastForDateAsync([FromBody] GetWeatherRequest getWeatherRequest, IMapper _mapper, IMediator _mediator, ILogger<WeatherEndpoints> _logger, CancellationToken cancellationToken = default)
     {
-        _logger.BeginScope("Request: {@request}", date);
-        _logger.LogInformation("Received request to get weather forecast by date: {@date}", date);
+        _logger.BeginScope("Request: {@request}", getWeatherRequest);
+        _logger.LogInformation("Received request to get weather forecast by date: {@date}", getWeatherRequest.Date);
 
-        return (await _weatherService.GetWeatherForecastByDateAsync(date, cancellationToken)).Match<IResult>(
+        return (await _mediator.Send(_mapper.Map<GetWeatherQuery>(getWeatherRequest), cancellationToken)).Match(
             success => TypedResults.Ok(_mapper.Map<WeatherForecastResponse>(success)),
             error => error.ToBadRequestProblemDetails(),
             notFound => notFound.ToNotFoundProblemDetails());
     }
 
-    public async static Task<IResult> AddWeatherAsync([AsParameters] AddWeatherRequest addWeatherForecastRequest, IMapper _mapper, ILogger<WeatherEndpoints> _logger, IWeatherService _weatherService, CancellationToken cancellationToken = default)
+    private static async Task<IResult> AddWeatherAsync([FromBody] AddWeatherRequest addWeatherForecastRequest, IMediator _mediator, IMapper _mapper, ILogger<WeatherEndpoints> _logger, CancellationToken cancellationToken = default)
     {
         _logger.BeginScope("Request: {@request}", addWeatherForecastRequest);
         _logger.LogInformation("Received request to add weather forecast: {@weatherForecast}", addWeatherForecastRequest);
 
-        var weatherForecastResult = _mapper.Map<Result<WeatherForecast>>(addWeatherForecastRequest.WeatherForecast);
+        var addWeatherResult = await _mediator.Send(_mapper.Map<AddWeatherCommand>(addWeatherForecastRequest), cancellationToken);
 
-        if (weatherForecastResult.IsFailure)
-        {
-            _logger.LogError(weatherForecastResult.Error!.Message);
-            return weatherForecastResult.ToProblemDetails();
-        }
-
-        var addWeatherForecastResult = await _weatherService.AddWeatherForecastAsync(weatherForecastResult.Value!, cancellationToken);
-
-        return (addWeatherForecastResult.IsSuccess)
+        return (addWeatherResult.IsSuccess)
             ? TypedResults.Ok()
-            : addWeatherForecastResult.ToProblemDetails();
+            : addWeatherResult.ToProblemDetails();
     }
 
-    public async static Task<IResult> ClearAsync(ILogger<WeatherEndpoints> _logger, IWeatherService _weatherService, CancellationToken cancellationToken = default)
+    private static async Task<IResult> ClearAsync(ILogger<WeatherEndpoints> _logger, IMediator _mediator, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Received request to clear storage");
 
-        var result = await _weatherService.ClearAsync(cancellationToken);
+        var result = await _mediator.Send(new ClearCommand(), cancellationToken);
 
         return (result.IsSuccess)
             ? TypedResults.Ok()
