@@ -2,10 +2,10 @@
 
 namespace Business.Domain_Objects;
 
-public class WeatherForecast : IEquatable<WeatherForecast>
+public sealed class WeatherForecast : IEquatable<WeatherForecast>
 {
-    public DateOnly Date { get; private set; }
-    public Weather Weather { get; private set; }
+    public DateOnly Date { get; private init; }
+    public Weather Weather { get; private init; }
 
     private WeatherForecast(DateOnly date, Weather weather) =>
         (Date, Weather) = (date, weather);
