@@ -7,6 +7,8 @@ public record ValidationFailedError(string error) : ValidationError(ErrorCode.We
 public record WeatherForecastNotFoundError(DateOnly Date) : NotFoundError(ErrorCode.WeatherForecastNotFoundError, $"Weather forecast for date: {Date} not found in storage.");
 public record WeatherForecastAlreadyExistsError() : AlreadyExistsError(ErrorCode.WeatherForecastAlreadyExistsError, "Weather forecast with same data already exists.");
 public record WeatherValidationError(string PropertyName, string PropertyValue) : ValidationError(ErrorCode.WeatherValidationError, $"Weather property: {PropertyName} with value: {PropertyValue} is invalid.");
+public record WeatherNameIsEmptyError() : ValidationError(ErrorCode.WeatherNameIsEmpty, $"Weather name is empty.");
+public record WeatherNameIsTooLongError() : ValidationError(ErrorCode.WeatherNameIsTooLong, $"Weather name is too long.");
 public record WeatherForecastValidationError(string PropertyName, string PropertyValue) : ValidationError(ErrorCode.WeatherForecastValidationError, $"Weather forecast property: {PropertyName} with value: {PropertyValue} is invalid.");
 
 
@@ -19,5 +21,8 @@ public enum ErrorCode
     WeatherForecastAlreadyExistsError = 20,
     ValidationError = 3,
     WeatherValidationError = 310,
-    WeatherForecastValidationError = 320
+    WeatherNameIsEmpty = 311,
+    WeatherNameIsTooLong = 312,
+    WeatherForecastValidationError = 320,
+
 }

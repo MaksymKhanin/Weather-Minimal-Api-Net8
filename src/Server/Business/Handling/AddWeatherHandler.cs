@@ -5,6 +5,7 @@ using Business.Ports;
 using Core;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Weather_Minimal_Api;
 
 namespace Business.Handling;
 internal class AddWeatherHandler(ILogger<AddWeatherHandler> logger, IMapper mapper, IStorage storage) : IRequestHandler<AddWeatherCommand, Result>
@@ -17,24 +18,35 @@ internal class AddWeatherHandler(ILogger<AddWeatherHandler> logger, IMapper mapp
     {
         _logger.LogInformation("Trying to add weather forecast to the storage.");
 
-        var weather = Weather.Create(request.Temperature, request.WindDirection, request.WindSpeed, request.Name, request.Description, request.Recommendation);
+        var weatherNameResult = WeatherName.Create(request.Name);
+
+        if (weatherNameResult.IsFailure)
+        {
+            _logger.LogError(weatherNameResult.Error!.ErrorCode + weatherNameResult.Error!.Message);
+            return weatherNameResult;
+        }
+
+        var weather = Weather.Create(request.Temperature, request.WindDirection, request.WindSpeed, weatherNameResult.Value!, request.Description, request.Recommendation);
 
         if (weather.IsFailure)
         {
+            _logger.LogError(weatherNameResult.Error!.ErrorCode + weatherNameResult.Error!.Message);
             return weather;
         }
 
-        var weatherForecast = WeatherForecast.Create(request.Date, weather.Value!);
+        var weatherForecastResult = WeatherForecast.Create(request.Date, weather.Value!);
 
-        if (weatherForecast.IsFailure)
+        if (weatherForecastResult.IsFailure)
         {
-            return weatherForecast;
+            _logger.LogError(weatherNameResult.Error!.ErrorCode + weatherNameResult.Error!.Message);
+            return weatherForecastResult;
         }
 
-        var weatherResult = await _storage.AddWeatherForecastAsync(weatherForecast.Value!, cancellationToken);
+        var weatherResult = await _storage.AddWeatherForecastAsync(weatherForecastResult.Value!, cancellationToken);
 
         if (weatherResult.IsFailure)
         {
+            _logger.LogError(weatherNameResult.Error!.ErrorCode + weatherNameResult.Error!.Message);
             return weatherResult;
         }
 
