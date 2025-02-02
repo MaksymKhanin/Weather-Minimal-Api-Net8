@@ -15,7 +15,7 @@ internal class GetWeatherHandler(ILogger<GetWeatherHandler> logger, IMapper mapp
 
     public async Task<Result<WeatherForecast>> Handle(GetWeatherQuery request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Trying to get weather forecast from the storage.");
+        _logger.LogInformation("Attempting to retrieve weather forecast from the storage for Date: {Date}", request.Date);
 
         var weatherResult = await _storage.GetWeatherForecastByDateAsync(request.Date, cancellationToken);
 
@@ -24,7 +24,7 @@ internal class GetWeatherHandler(ILogger<GetWeatherHandler> logger, IMapper mapp
             return weatherResult;
         }
 
-        _logger.LogInformation($"Found weather forecast: Date - {weatherResult.Value!.Date}; Temperature - {weatherResult.Value!.Weather.Temperature}");
+        _logger.LogInformation("Weather forecast found for Date: {Date}; Temperature: {Temperature}°C", weatherResult.Value!.Date, weatherResult.Value!.Weather.Temperature);
 
         return weatherResult;
     }

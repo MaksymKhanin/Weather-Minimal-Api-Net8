@@ -4,24 +4,7 @@ namespace Weather_Minimal_Api.Extensions;
 
 public static class ResultExtensions
 {
-    public static IResult ToProblemDetails(this Result result)
-    {
-        if (result.IsSuccess)
-        {
-            throw new InvalidOperationException("Can`t convert success result to problem.");
-        }
-
-        return TypedResults.Problem(
-            statusCode: StatusCodes.Status400BadRequest,
-            title: "Bad Request",
-            type: "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-            extensions: new Dictionary<string, object?>
-            {
-                { "errors", new[] { result.Error } }
-            });
-    }
-
-    public static IResult ToBadRequestProblemDetails(this Error error)
+    public static IResult ToBadRequest(this Error error)
     {
         return TypedResults.Problem(
             statusCode: StatusCodes.Status400BadRequest,
@@ -33,7 +16,7 @@ public static class ResultExtensions
             });
     }
 
-    public static IResult ToNotFoundProblemDetails(this Error error)
+    public static IResult ToNotFound(this Error error)
     {
         if (error is not NotFoundError)
         {

@@ -27,9 +27,9 @@ public class Result
     public static Result Fail(Error error) => new Result(false, error);
     public static Result<T> Fail<T>(Error error) => new Result<T>(default, false, error);
     public TResult Match<TResult>(Func<TResult> success, Func<Error, TResult> error) => IsSuccess ? success() : error(Error!);
-
+    public TResult Match<TResult>(Func<TResult> success, Func<Error, TResult> error, Func<NotFoundError, TResult> notFound) => IsSuccess ? success() : Error is NotFoundError ? notFound((NotFoundError)Error) : error(Error!);
+    
     public static implicit operator Result(Error error) => new Result(false, error);
-
     public static Error FailAndLog<T>(Error error, ILogger<T> logger, LogLevel logLevel)
     {
         logger.Log(logLevel, error.Message);
